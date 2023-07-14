@@ -52,7 +52,7 @@ def seasons(event, context):
     response = requests.request("GET", os.environ['API_SEASONS'], headers={}, data={})
     seasons_list = pd.read_json(response.text).MRData.SeasonTable.get("Seasons")
     seasons_df = pd.DataFrame(seasons_list, columns=["season","url"])
-    uploadToS3(os.environ['S3_BUCKET_NAME'],'/inbound/seasons.json',seasons_df.to_json(orient='records',lines=True))
+    uploadToS3(os.environ['S3_BUCKET_NAME'],'inbound/seasons.json',seasons_df.to_json(orient='records',lines=True))
     return {
         "statusCode": 200, 
         "body": seasons_df.to_json(orient='records',lines=True)
@@ -75,7 +75,7 @@ def circuits(event, context):
     response = requests.request("GET", os.environ['API_CIRCUITS'], headers={}, data={})
     circuits_list= pd.read_json(response.text).MRData.CircuitTable.get("Circuits")
     circuits_df = pd.DataFrame(circuits_list, columns=["circuitId","url","circuitName","Location"])
-    uploadToS3(os.environ['S3_BUCKET_NAME'],'/inbound/circuits.json',circuits_df.to_json(orient='records',lines=True))
+    uploadToS3(os.environ['S3_BUCKET_NAME'],'inbound/circuits.json',circuits_df.to_json(orient='records',lines=True))
     return {
         "statusCode": 200, 
         "body": circuits_df.to_json(orient='records',lines=True)
@@ -99,7 +99,7 @@ def drivers(event, context):
     response = requests.request("GET", os.environ['API_DRIVERS'], headers={}, data={})
     drivers_list= pd.read_json(response.text).MRData.DriverTable.get("Drivers")
     drivers_df = pd.DataFrame(drivers_list, columns=["driverId","url","givenName","familyName","dateOfBirth","nationality"])
-    uploadToS3(os.environ['S3_BUCKET_NAME'],'/inbound/drivers.json',drivers_df.to_json(orient='records',lines=True))
+    uploadToS3(os.environ['S3_BUCKET_NAME'],'inbound/drivers.json',drivers_df.to_json(orient='records',lines=True))
     return {
         "statusCode": 200, 
         "body": drivers_df.to_json(orient='records',lines=True)
@@ -124,7 +124,7 @@ def constructors(event, context):
     constructors_df = pd.DataFrame(constructors_list, columns=["constructorId","url","name","nationality"])
     uploadToS3(
                 os.environ['S3_BUCKET_NAME'],
-               '/inbound/constructors.json',
+               'inbound/constructors.json',
                constructors_df.to_json(orient='records',lines=True)
                )
     return {

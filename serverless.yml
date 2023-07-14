@@ -52,15 +52,13 @@ functions:
     layers:
       - Ref: PythonRequirementsLambdaLayer
     environment:
-      API_SEASONS: 'http://ergast.com/api/f1/seasons.json?limit=1000'
-
+      API_SEASONS: http://ergast.com/api/f1/seasons.json?limit=1000
   circuits:
     handler: extraction.circuits
     environment:
       API_CIRCUITS: http://ergast.com/api/f1/circuits.json?limit=1000
     layers:
-      - Ref: PythonRequirementsLambdaLayer
-     
+      - Ref: PythonRequirementsLambdaLayer 
   drivers: 
     handler: extraction.drivers
     environment:
@@ -74,4 +72,10 @@ functions:
       - Ref: PythonRequirementsLambdaLayer     
     environment:
       API_CONSTRUCTORS: http://ergast.com/api/f1/constructors.json?limit=1000
-    
+
+iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - s3:PutObject
+      - s3:GetObject
+    Resource: arn:aws:s3:::formula1s3bucket/*

@@ -30,4 +30,4 @@ s_*.py
 unzip*.py
 *.json
 *.zip
-__pychache__/*
+__pychache__/
