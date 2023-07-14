@@ -23,19 +23,16 @@ provider:
   memorySize: 1024
   architecture: x86_64
   timeout: 60
-  iam:
-    role:
-      statements:
-        # Allow functions to list all buckets
-        - Effect: Allow
-          Action: 's3:ListBucket'
-          Resource: '*'
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 's3:ListBucket'
+      Resource: '*'
         # Allow functions to read/write objects in a bucket
-        - Effect: Allow
-          Action:
-            - 's3:GetObject'
-            - 's3:PutObject'
-          Resource:
+    - Effect: Allow
+      Action:
+        - 's3:GetObject'
+        - 's3:PutObject'
+      Resource:
             - 'arn:aws:s3:::formula1s3bucket/*'
   environment:
     S3_BUCKET_NAME: formula1s3bucket
