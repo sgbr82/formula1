@@ -22,11 +22,29 @@ provider:
   profile: serverless-admin
   memorySize: 1024
   architecture: x86_64
+  timeout: 60
+  iam:
+    role:
+      statements:
+        # Allow functions to list all buckets
+        - Effect: Allow
+          Action: 's3:ListBucket'
+          Resource: '*'
+        # Allow functions to read/write objects in a bucket
+        - Effect: Allow
+          Action:
+            - 's3:GetObject'
+            - 's3:PutObject'
+          Resource:
+            - 'arn:aws:s3:::formula1s3bucket/*'
   environment:
     S3_BUCKET_NAME: formula1s3bucket
   # custom:
   #   baseDomain: ${param:domain}
   #   baseDomainLimit: ${param:limit}
+
+
+
 plugins:
   - serverless-python-requirements
 custom:
@@ -38,6 +56,8 @@ custom:
     useStaticCache: true
     slim: true
     cacheLocation: ./.serverless/.requirements_cache
+
+
 package:
   individually: true
   exclude:
@@ -46,13 +66,15 @@ package:
     - '*.py'
 
 
+
 functions:
   seasons:
     handler: extraction.seasons
-    layers:
-      - Ref: PythonRequirementsLambdaLayer
     environment:
       API_SEASONS: http://ergast.com/api/f1/seasons.json?limit=1000
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
+
   circuits:
     handler: extraction.circuits
     environment:
@@ -73,9 +95,4 @@ functions:
     environment:
       API_CONSTRUCTORS: http://ergast.com/api/f1/constructors.json?limit=1000
 
-iamRoleStatements:
-  - Effect: Allow
-    Action:
-      - s3:PutObject
-      - s3:GetObject
-    Resource: arn:aws:s3:::formula1s3bucket/*
+
