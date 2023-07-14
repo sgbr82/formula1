@@ -1,0 +1,77 @@
+org: girisidda
+app: formula1
+service: ingestion # NOTE: update this with your service name
+
+frameworkVersion: '3'
+
+# params:
+#   default:
+#     domain: 
+#     limit: ?limit=1000-
+#     seasons: seasons.json
+#     circuits: circuits.json
+#     drivers: drivers.json
+#     constructors: constructors.json
+
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: dev
+  region: us-east-2
+  profile: serverless-admin
+  memorySize: 1024
+  architecture: x86_64
+  environment:
+    S3_BUCKET_NAME: formula1s3bucket
+  # custom:
+  #   baseDomain: ${param:domain}
+  #   baseDomainLimit: ${param:limit}
+plugins:
+  - serverless-python-requirements
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    zip: true
+    layer: true
+    useDownloadCache: true
+    useStaticCache: true
+    slim: true
+    cacheLocation: ./.serverless/.requirements_cache
+package:
+  individually: true
+  exclude:
+    - '**/*'
+  include:
+    - '*.py'
+
+
+functions:
+  seasons:
+    handler: extraction.seasons
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
+    environment:
+      API_SEASONS: 'http://ergast.com/api/f1/seasons.json?limit=1000'
+
+  circuits:
+    handler: extraction.circuits
+    environment:
+      API_CIRCUITS: http://ergast.com/api/f1/circuits.json?limit=1000
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
+     
+  drivers: 
+    handler: extraction.drivers
+    environment:
+      API_DRIVERS: http://ergast.com/api/f1/drivers.json?limit=1000
+    layers:
+      - Ref: PythonRequirementsLambdaLayer     
+
+  constructors: 
+    handler: extraction.constructors
+    layers:
+      - Ref: PythonRequirementsLambdaLayer     
+    environment:
+      API_CONSTRUCTORS: http://ergast.com/api/f1/constructors.json?limit=1000
+    
